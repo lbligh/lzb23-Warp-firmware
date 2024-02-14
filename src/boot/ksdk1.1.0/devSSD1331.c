@@ -19,15 +19,16 @@ volatile uint8_t	payloadBytes[1];
 
 /*
  *	Override Warp firmware's use of these pins and define new aliases.
+ *  NOT NEEDED - L. Bligh
  */
-enum
-{
-	kSSD1331PinMOSI		= GPIO_MAKE_PIN(HW_GPIOA, 8),
-	kSSD1331PinSCK		= GPIO_MAKE_PIN(HW_GPIOA, 9),
-	kSSD1331PinCSn		= GPIO_MAKE_PIN(HW_GPIOB, 13),
-	kSSD1331PinDC		= GPIO_MAKE_PIN(HW_GPIOA, 12),
-	kSSD1331PinRST		= GPIO_MAKE_PIN(HW_GPIOB, 0),
-};
+// enum
+// {
+// 	kSSD1331PinMOSI		= GPIO_MAKE_PIN(HW_GPIOA, 8),
+// 	kSSD1331PinSCK		= GPIO_MAKE_PIN(HW_GPIOA, 9),
+// 	kSSD1331PinCSn		= GPIO_MAKE_PIN(HW_GPIOB, 13),
+// 	kSSD1331PinDC		= GPIO_MAKE_PIN(HW_GPIOA, 12),
+// 	kSSD1331PinRST		= GPIO_MAKE_PIN(HW_GPIOB, 0),
+// };
 
 static int
 writeCommand(uint8_t commandByte)
@@ -64,8 +65,9 @@ writeCommand(uint8_t commandByte)
 	return status;
 }
 
-
-
+/*!
+ * @brief Initialises the SSD1331 OLED driver
+ */
 int
 devSSD1331init(void)
 {
@@ -77,7 +79,7 @@ devSSD1331init(void)
 	PORT_HAL_SetMuxMode(PORTA_BASE, 8u, kPortMuxAlt3);
 	PORT_HAL_SetMuxMode(PORTA_BASE, 9u, kPortMuxAlt3);
 
-	enableSPIpins();
+	warpEnableSPIpins();
 
 	/*
 	 *	Override Warp firmware's use of these pins.
@@ -145,6 +147,7 @@ devSSD1331init(void)
 	 */
 	writeCommand(kSSD1331CommandFILL);
 	writeCommand(0x01);
+    SEGGER_RTT_WriteString(0, "\r\n\tDone with enabling fill...\n");
 
 	/*
 	 *	Clear Screen
@@ -154,15 +157,54 @@ devSSD1331init(void)
 	writeCommand(0x00);
 	writeCommand(0x5F);
 	writeCommand(0x3F);
+    SEGGER_RTT_WriteString(0, "\r\n\tDone with screen clear...\n");
+
+    /*
+     *	Read the manual for the SSD1331 (SSD1331_1.2.pdf) to figure
+     *	out how to fill the entire screen with the brightest shade
+     *	of green.
+     */
+
+    //set max contrast (0xFF) on each colour channel for brightest green
+    writeCommand(kSSD1331CommandCONTRASTA);		// 0x81
+	writeCommand(0xFF);
+	writeCommand(kSSD1331CommandCONTRASTB);		// 0x82
+	writeCommand(0xFF);
+	writeCommand(kSSD1331CommandCONTRASTC);		// 0x83
+	writeCommand(0xFF);
+    
+    // set highest precharge level possible and highest speed for max brightness
+	writeCommand(kSSD1331CommandPRECHARGEA);	// 0x8A
+	writeCommand(0xFF);
+	writeCommand(kSSD1331CommandPRECHARGEB);	// 0x8B
+	writeCommand(0xFF);
+	writeCommand(kSSD1331CommandPRECHARGEA);	// 0x8C
+	writeCommand(0xFF);
+	writeCommand(kSSD1331CommandPRECHARGELEVEL);	// 0xBB
+	writeCommand(0x3E);	
+
+    // set maximum pixel current for maximum brightness
+	writeCommand(kSSD1331CommandMASTERCURRENT);	// 0x87
+	writeCommand(0x0F);
 
 
+    writeCommand(kSSD1331CommandDRAWRECT);
+    // start column -> row
+    writeCommand(0x00);
+    writeCommand(0x00);
+    // end column -> row
+    writeCommand(0x5F);
+    writeCommand(0x3F);
+    // line colour BGR in rgb565
+    writeCommand(0x00);
+    writeCommand(0x3F);
+    writeCommand(0x00);
+    // fill colour BGR in rgb565
+    writeCommand(0x00);
+    writeCommand(0x3F);
+    writeCommand(0x00);
 
-	/*
-	 *	Any post-initialization drawing commands go here.
-	 */
-	//...
-
-
+    SEGGER_RTT_WriteString(0, "\r\n\tDone with draw rectangle...\n");
 
 	return 0;
 }

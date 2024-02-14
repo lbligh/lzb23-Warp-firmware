@@ -76,17 +76,30 @@
 /*
 * Include all sensors because they will be needed to decode flash.
 */
-#include "devADXL362.h"
-#include "devAMG8834.h"
-#include "devMMA8451Q.h"
-#include "devMAG3110.h"
-#include "devL3GD20H.h"
-#include "devBME680.h"
-#include "devBMX055.h"
-#include "devCCS811.h"
-#include "devHDC1000.h"
-#include "devRV8803C7.h"
+#if (!WARP_BUILD_ENABLE_FRDMKL03)
+    #include "devADXL362.h"
+    #include "devAMG8834.h"
+    #include "devMAG3110.h"
+    #include "devL3GD20H.h"
+    #include "devBME680.h"
+    #include "devBMX055.h"
+    #include "devCCS811.h"
+    #include "devHDC1000.h"
+    #include "devRV8803C7.h"
+#endif
 
+#include "devMMA8451Q.h"
+#include "devSSD1331.h" // added by L. Bligh
+
+/* 
+ * Added by L. Bligh - not sure why it cannot find the original defs
+ */
+
+#define HW_GPIOA (0U) /*!< Instance number for GPIOA. */
+#define HW_GPIOB (1U) /*!< Instance number for GPIOB. */
+
+#define PORTA_BASE (0x40049000u)
+#define PORTB_BASE (0x4004A000u)
 
 #if (WARP_BUILD_ENABLE_DEVADXL362)
 	volatile WarpSPIDeviceState			deviceADXL362State;
@@ -1914,10 +1927,20 @@ main(void)
 	int timer  = 0;
 	int rttKey = -1;
 
-	bool _originalWarpExtraQuietMode = gWarpExtraQuietMode;
-	gWarpExtraQuietMode = false;
-	warpPrint("Press any key to show menu...\n");
-	gWarpExtraQuietMode = _originalWarpExtraQuietMode;
+
+    bool _originalWarpExtraQuietMode = gWarpExtraQuietMode;
+    gWarpExtraQuietMode = false;
+
+    /*
+     * Run Display initialisation code - L. Bligh
+     */
+
+    warpPrint("\n\rRUNNING INIT CODE HERE\n");
+    devSSD1331init();
+    warpPrint("\rDONE RUNNING INIT CODE HERE\n");
+    
+    warpPrint("Press any key to show menu...\n");
+    gWarpExtraQuietMode = _originalWarpExtraQuietMode;
 
 	while (rttKey < 0 && timer < kWarpCsvstreamMenuWaitTimeMilliSeconds)
 	{

@@ -166,6 +166,48 @@ gpio_output_pin_user_config_t	outputPins[] = {
 			.config.driveStrength = kPortLowDriveStrength,
 		},
 	#elif (WARP_BUILD_ENABLE_FRDMKL03)
+        {
+			.pinName = kWarpPinLED_RED,
+			.config.outputLogic = 1,
+			.config.slewRate = kPortSlowSlewRate,
+			.config.driveStrength = kPortLowDriveStrength,
+		},
+        {
+			.pinName = kWarpPinLED_GREEN,
+			.config.outputLogic = 1,
+			.config.slewRate = kPortSlowSlewRate,
+			.config.driveStrength = kPortLowDriveStrength,
+		},
+        {
+			.pinName = kSSD1331PinMOSI,
+			.config.outputLogic = 1,
+			.config.slewRate = kPortSlowSlewRate,
+			.config.driveStrength = kPortLowDriveStrength,
+		},
+        {
+			.pinName = kSSD1331PinSCK,
+			.config.outputLogic = 1,
+			.config.slewRate = kPortSlowSlewRate,
+			.config.driveStrength = kPortLowDriveStrength,
+		},
+        {
+			.pinName = kSSD1331PinCSn,
+			.config.outputLogic = 1,
+			.config.slewRate = kPortSlowSlewRate,
+			.config.driveStrength = kPortLowDriveStrength,
+		},
+        {
+			.pinName = kSSD1331PinDC,
+			.config.outputLogic = 1,
+			.config.slewRate = kPortSlowSlewRate,
+			.config.driveStrength = kPortLowDriveStrength,
+		},
+        {
+			.pinName = kSSD1331PinRST,
+			.config.outputLogic = 1,
+			.config.slewRate = kPortSlowSlewRate,
+			.config.driveStrength = kPortLowDriveStrength,
+		},
 
 	#endif
 
