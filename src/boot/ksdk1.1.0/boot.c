@@ -90,6 +90,7 @@
 
 #include "devMMA8451Q.h"
 #include "devSSD1331.h" // added by L. Bligh
+#include "devINA219.h" // added by L. Bligh
 
 /* 
  * Added by L. Bligh - not sure why it cannot find the original defs
@@ -133,6 +134,10 @@
 
 #if (WARP_BUILD_ENABLE_DEVMMA8451Q)
 	volatile WarpI2CDeviceState			deviceMMA8451QState;
+#endif
+
+#if (WARP_BUILD_ENABLE_DEVINA219)
+	volatile WarpI2CDeviceState			deviceINA219State;
 #endif
 
 #if (WARP_BUILD_ENABLE_DEVLPS25H)
@@ -1690,6 +1695,10 @@ main(void)
 		initMMA8451Q(	0x1C	/* i2cAddress */,	kWarpDefaultSupplyVoltageMillivoltsMMA8451Q	);
 #endif
 
+#if (WARP_BUILD_ENABLE_DEVINA219)
+		initINA219(	0x40	/* i2cAddress */,	kWarpDefaultSupplyVoltageMillivoltsINA219	);
+#endif
+
 #if (WARP_BUILD_ENABLE_DEVLPS25H)
 		initLPS25H(	0x5C	/* i2cAddress */,	kWarpDefaultSupplyVoltageMillivoltsLPS25H	);
 #endif
@@ -1934,11 +1943,15 @@ main(void)
     /*
      * Run Display initialisation code - L. Bligh
      */
-
+    #if(WARP_BUILD_ENABLE_FRDMKL03)
     warpPrint("\n\rRUNNING INIT CODE HERE\n");
     devSSD1331init();
     warpPrint("\rDONE RUNNING INIT CODE HERE\n");
-    
+
+    warpPrint("\n\rRUNNING INA INIT CODE HERE\n");
+    printSensorDataINA219(1);
+    warpPrint("\rDONE RUNNING INA INIT CODE HERE\n");
+    #endif
     warpPrint("Press any key to show menu...\n");
     gWarpExtraQuietMode = _originalWarpExtraQuietMode;
 
@@ -3576,6 +3589,10 @@ printAllSensors(bool printHeadersAndCalibration, bool hexModeFlag,
 		warpPrint(" MMA8451 x, MMA8451 y, MMA8451 z,");
 #endif
 
+#if (WARP_BUILD_ENABLE_DEVINA219)
+		warpPrint(" INA219 Shunt, INA219 Bus, INA219 Power, INA219 Current");
+#endif
+
 #if (WARP_BUILD_ENABLE_DEVMAG3110)
 		warpPrint(" MAG3110 x, MAG3110 y, MAG3110 z, MAG3110 Temp,");
 #endif
@@ -3626,6 +3643,10 @@ printAllSensors(bool printHeadersAndCalibration, bool hexModeFlag,
 
 #if (WARP_BUILD_ENABLE_DEVMMA8451Q)
 		printSensorDataMMA8451Q(hexModeFlag);
+#endif
+
+#if (WARP_BUILD_ENABLE_DEVINA219)
+		printSensorDataINA219(hexModeFlag);
 #endif
 
 #if (WARP_BUILD_ENABLE_DEVMAG3110)
