@@ -4,3 +4,6 @@ setup.conf
 tools/scripts/warp.jlink.commands
 tools/scripts/glaux.jlink.commands
 .vscode/*
+
+test.log
+op.csv

@@ -1,4 +1,8 @@
 /*
+    Authored 2024. Lucius Bligh. Based off devHDC1000.c driver, as well
+    as the Adafruit INA219 driver library.
+    Preamble from devHDC1000.h follows:
+    
 	Authored 2016-2018. Phillip Stanley-Marbell. Additional contributors,
 	2018-onwards, see git log.
 
@@ -42,16 +46,45 @@ WarpStatus	writeSensorRegisterINA219(uint8_t deviceRegister, uint16_t payload);
 void		printSensorDataINA219(bool hexModeFlag);
 uint8_t		appendSensorDataINA219(uint8_t* buf);
 
+int16_t getBusVoltage_raw_INA219();
+int16_t getShuntVoltage_raw_INA219();
+int16_t getCurrent_raw_INA219();
+int16_t getPower_raw_INA219();
+
+int32_t getShuntVoltage_uV_INA219();
+int32_t getBusVoltage_mV_INA219();
+int32_t getCurrent_uA_INA219();
+int32_t getPower_uW_INA219();
 
 /*
  * Values from Adafruit_INA219 Library
  */
+
 /*=========================================================================
-    CONFIG REGISTER (R/W)
+    Register Addresses
 **************************************************************************/
 
 /** config register address **/
 #define INA219_REG_CONFIG (0x00)
+
+/** shunt voltage register **/
+#define INA219_REG_SHUNTVOLTAGE (0x01)
+
+/** bus voltage register **/
+#define INA219_REG_BUSVOLTAGE (0x02)
+
+/** power register **/
+#define INA219_REG_POWER (0x03)
+
+/** current register **/
+#define INA219_REG_CURRENT (0x04)
+
+/** calibration register **/
+#define INA219_REG_CALIBRATION (0x05)
+
+/*=========================================================================
+    CONFIG REGISTER VALUES
+**************************************************************************/
 
 /** reset bit **/
 #define INA219_CONFIG_RESET (0x8000) // Reset Bit
@@ -99,8 +132,7 @@ enum
 };
 
 /** mask for shunt ADC resolution bits **/
-#define INA219_CONFIG_SADCRES_MASK \
-    (0x0078) // Shunt ADC Resolution and Averaging Mask
+#define INA219_CONFIG_SADCRES_MASK (0x0078) // Shunt ADC Resolution and Averaging Mask
 
 /** values for shunt ADC resolution **/
 enum
@@ -133,18 +165,3 @@ enum
     INA219_CONFIG_MODE_BVOLT_CONTINUOUS =       0x06, /**< bus voltage continuous */
     INA219_CONFIG_MODE_SANDBVOLT_CONTINUOUS =   0x07, /**< shunt and bus voltage continuous */
 };
-
-/** shunt voltage register **/
-#define INA219_REG_SHUNTVOLTAGE (0x01)
-
-/** bus voltage register **/
-#define INA219_REG_BUSVOLTAGE (0x02)
-
-/** power register **/
-#define INA219_REG_POWER (0x03)
-
-/** current register **/
-#define INA219_REG_CURRENT (0x04)
-
-/** calibration register **/
-#define INA219_REG_CALIBRATION (0x05)
