@@ -1948,20 +1948,6 @@ main(void)
     devSSD1331init();
     warpPrint("\n\rDONE RUNNING OLED INIT CODE HERE\n");
     
-    OSA_TimeDelay(100); // time for current to stabilise
-
-    warpPrint("\n\rRUNNING CURRENT MEASUREMENT CODE HERE\n");
-    warpPrint("\ncurrent (uA), bus (mV), shunt (uV), power (uW), time (ms)\n");
-
-    for (int i = 0; i < 1000; i++)
-    {
-        int32_t bus_mV = getBusVoltage_mV_INA219();
-        int32_t shunt_uV = getShuntVoltage_uV_INA219();
-        int32_t current_uA = getCurrent_uA_INA219();
-        int32_t power_uW = getPower_uW_INA219();
-        uint32_t time = OSA_TimeGetMsec();
-        warpPrint("%d, %d, %d, %d, %d\n", current_uA, bus_mV, shunt_uV, power_uW, time);
-    }
 #endif
 
     warpPrint("Press any key to show menu...\n");
