@@ -40,6 +40,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+#include <math.h>
 
 /*
  *	config.h needs to come first
@@ -89,8 +90,9 @@
 #endif
 
 #include "devMMA8451Q.h"
-#include "devSSD1331.h" // added by L. Bligh
-#include "devINA219.h" // added by L. Bligh
+#include "knock.h"
+// #include "devSSD1331.h" // added by L. Bligh
+// #include "devINA219.h" // added by L. Bligh
 
 /* 
  * Added by L. Bligh - not sure why it cannot find the original defs
@@ -203,6 +205,7 @@
 	#include "devBGX.h"
 	volatile WarpUARTDeviceState			deviceBGXState;
 #endif
+
 
 typedef enum
 {
@@ -1941,13 +1944,41 @@ main(void)
     gWarpExtraQuietMode = false;
 
 /*
- * Run Display initialisation and Current Measurement code - L. Bligh
+ * Run L. Bligh Code
  */
 #if (WARP_BUILD_ENABLE_FRDMKL03)
-    warpPrint("\n\rRUNNING OLED INIT CODE HERE\n");
-    devSSD1331init();
-    warpPrint("\n\rDONE RUNNING OLED INIT CODE HERE\n");
+    warpPrint("\n\nSTARTING");
+    PORT_HAL_SetMuxMode(PORTB_BASE, 11u, kPortMuxAsGpio);
+    PORT_HAL_SetMuxMode(PORTB_BASE, 10u, kPortMuxAsGpio);
+    GPIO_DRV_ClearPinOutput(kWarpPinLED_RED);
+    OSA_TimeDelay(100);
+    GPIO_DRV_SetPinOutput(kWarpPinLED_RED);
+    OSA_TimeDelay(100);
+
+    GPIO_DRV_ClearPinOutput(kWarpPinLED_RED);
+    OSA_TimeDelay(100);
+    GPIO_DRV_SetPinOutput(kWarpPinLED_RED);
+    OSA_TimeDelay(100);
+
+    GPIO_DRV_ClearPinOutput(kWarpPinLED_RED);
+    OSA_TimeDelay(100);
+    GPIO_DRV_SetPinOutput(kWarpPinLED_RED);
+
+	setup_knocking();
+	knock_loop();
+
+    int16_t accel[3];
     
+    // while (1)
+    warpPrint("\nt,x");
+    for (int i = 0; i < 1000; i++)
+    {
+        getAccelMMA8451Q(&accel[0]);
+        int32_t abs = sqrt(accel[0]*accel[0] + accel[1]*accel[1] + accel[2]*accel[2]);
+        warpPrint("\n%d,%d", OSA_TimeGetMsec(), abs);
+    }
+	while (1);
+
 #endif
 
     warpPrint("Press any key to show menu...\n");

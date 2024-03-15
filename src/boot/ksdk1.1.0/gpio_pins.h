@@ -1,6 +1,7 @@
 #ifndef __FSL_GPIO_PINS_H__
 #define __FSL_GPIO_PINS_H__
 #include "fsl_gpio_driver.h"
+#include "device/MKL03Z4/MKL03Z4_registers.h"
 
 /*
  *	On Warp, these are the alternative functions we have chosen:
@@ -72,7 +73,7 @@ enum _gpio_pins
 
 	#if (WARP_BUILD_ENABLE_FRDMKL03)
 		kWarpPinUnusedPTB0			= GPIO_MAKE_PIN(HW_GPIOB, 0),
-        kSSD1331PinRST		        = GPIO_MAKE_PIN(HW_GPIOB, 0),
+        progButtonPin		        = GPIO_MAKE_PIN(HW_GPIOB, 0),
 		kWarpPinUnusedPTB1			= GPIO_MAKE_PIN(HW_GPIOB, 1),
 		kWarpPinUnusedPTB2			= GPIO_MAKE_PIN(HW_GPIOB, 2),
 		kWarpPinUnusedPTB3			= GPIO_MAKE_PIN(HW_GPIOB, 3),
@@ -85,7 +86,7 @@ enum _gpio_pins
 		kWarpPinUnusedPTB11			= GPIO_MAKE_PIN(HW_GPIOB, 11),
         kWarpPinLED_GREEN			= GPIO_MAKE_PIN(HW_GPIOB, 11),
 		kWarpPinUnusedPTB13			= GPIO_MAKE_PIN(HW_GPIOB, 13),
-        kSSD1331PinCSn		        = GPIO_MAKE_PIN(HW_GPIOB, 13),
+        kWarpPinLED_BLUE	        = GPIO_MAKE_PIN(HW_GPIOB, 13),
 
 
 		kWarpPinUnusedPTA0			= GPIO_MAKE_PIN(HW_GPIOA, 0),
@@ -97,7 +98,7 @@ enum _gpio_pins
 		kWarpPinUnusedPTA6			= GPIO_MAKE_PIN(HW_GPIOA, 6),
 		kWarpPinUnusedPTA7			= GPIO_MAKE_PIN(HW_GPIOA, 7),
 		kWarpPinUnusedPTA8			= GPIO_MAKE_PIN(HW_GPIOA, 8),
-        kSSD1331PinMOSI		        = GPIO_MAKE_PIN(HW_GPIOA, 8),
+        kSSD1331PinMOSI		        = GPIO_MAKE_PIN(HW_PORTA, 0x8),
 		kWarpPinUnusedPTA9			= GPIO_MAKE_PIN(HW_GPIOA, 9),
         kSSD1331PinSCK		        = GPIO_MAKE_PIN(HW_GPIOA, 9),
 		kWarpPinUnusedPTA12			= GPIO_MAKE_PIN(HW_GPIOA, 12),

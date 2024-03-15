@@ -179,31 +179,7 @@ gpio_output_pin_user_config_t	outputPins[] = {
 			.config.driveStrength = kPortLowDriveStrength,
 		},
         {
-			.pinName = kSSD1331PinMOSI,
-			.config.outputLogic = 1,
-			.config.slewRate = kPortSlowSlewRate,
-			.config.driveStrength = kPortLowDriveStrength,
-		},
-        {
-			.pinName = kSSD1331PinSCK,
-			.config.outputLogic = 1,
-			.config.slewRate = kPortSlowSlewRate,
-			.config.driveStrength = kPortLowDriveStrength,
-		},
-        {
-			.pinName = kSSD1331PinCSn,
-			.config.outputLogic = 1,
-			.config.slewRate = kPortSlowSlewRate,
-			.config.driveStrength = kPortLowDriveStrength,
-		},
-        {
-			.pinName = kSSD1331PinDC,
-			.config.outputLogic = 1,
-			.config.slewRate = kPortSlowSlewRate,
-			.config.driveStrength = kPortLowDriveStrength,
-		},
-        {
-			.pinName = kSSD1331PinRST,
+			.pinName = kWarpPinLED_BLUE,
 			.config.outputLogic = 1,
 			.config.slewRate = kPortSlowSlewRate,
 			.config.driveStrength = kPortLowDriveStrength,
@@ -235,6 +211,13 @@ gpio_output_pin_user_config_t	outputPins[] = {
  *	NOTE: The semantics is that pins that are excluded are disabled (TODO: double check).
  */
 gpio_input_pin_user_config_t	inputPins[] = {
+    {
+		.pinName = progButtonPin,
+		.config.isPullEnable = false,
+		.config.pullSelect = kPortPullDown,
+		.config.isPassiveFilterEnabled = false,
+		.config.interrupt = kPortIntDisabled,
+	},
 	{
 		.pinName = GPIO_PINS_OUT_OF_RANGE,
 	}

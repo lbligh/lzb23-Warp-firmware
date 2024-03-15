@@ -1,6 +1,5 @@
 /*
-	Authored 2016-2018. Phillip Stanley-Marbell. Additional contributors,
-	2018-onwards, see git log.
+	Authored 2024. Lucius Z Bligh
 
 	All rights reserved.
 
@@ -35,17 +34,10 @@
 	ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
+#include <stdint.h>
 
-void		initMMA8451Q(const uint8_t i2cAddress, uint16_t operatingVoltageMillivolts);
-WarpStatus	readSensorRegisterMMA8451Q(uint8_t deviceRegister, int numberOfBytes);
-WarpStatus	writeSensorRegisterMMA8451Q(uint8_t deviceRegister, uint8_t payloadBtye);
-WarpStatus 	configureSensorMMA8451Q(uint8_t payloadF_SETUP, uint8_t payloadCTRL_REG1);
-void		printSensorDataMMA8451Q(bool hexModeFlag);
-uint8_t		appendSensorDataMMA8451Q(uint8_t* buf);
-
-void getAccelMMA8451Q(int16_t *buff);
-void floatPrint(double to_print);
-
-const uint8_t bytesPerMeasurementMMA8451Q = 6;
-const uint8_t bytesPerReadingMMA8451Q                = 2;
-const uint8_t numberOfReadingsPerMeasurementMMA8451Q = 3;
+void setup_knocking();
+void knock_loop();
+void listenToSecretKnock();
+void triggerDoorUnlock();
+uint8_t validateKnock();

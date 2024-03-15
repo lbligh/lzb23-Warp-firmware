@@ -55,6 +55,7 @@
 #include "gpio_pins.h"
 #include "SEGGER_RTT.h"
 #include "warp.h"
+#include "devMMA8451Q.h"
 
 
 extern volatile WarpI2CDeviceState	deviceMMA8451QState;
@@ -62,15 +63,30 @@ extern volatile uint32_t		gWarpI2cBaudRateKbps;
 extern volatile uint32_t		gWarpI2cTimeoutMilliseconds;
 extern volatile uint32_t		gWarpSupplySettlingDelayMilliseconds;
 
-
+double accelLSBValue;
 
 void
 initMMA8451Q(const uint8_t i2cAddress, uint16_t operatingVoltageMillivolts)
 {
 	deviceMMA8451QState.i2cAddress			= i2cAddress;
 	deviceMMA8451QState.operatingVoltageMillivolts	= operatingVoltageMillivolts;
+    
+    uint32_t numberOfConfigErrors = 0;
 
-	return;
+    numberOfConfigErrors += configureSensorMMA8451Q(
+        0x00, /* Payload: Disable FIFO */
+        0x01 /* Normal read, 800Hz, normal, active mode */);
+
+    //configure for 2g full scale measurement
+    readSensorRegisterMMA8451Q(0x2a, 1);
+    uint8_t c = deviceMMA8451QState.i2cBuffer[0];
+    writeSensorRegisterMMA8451Q(0x2a, c & ~(0x01));
+    writeSensorRegisterMMA8451Q(kWarpSensorConfigurationRegisterMMA8451QXYZ_DATA_CFG, (uint8_t)0x10);
+    writeSensorRegisterMMA8451Q(0x2a, c);
+    OSA_TimeDelay(10);
+
+    accelLSBValue = 1.0f/4096;
+    return;
 }
 
 WarpStatus
@@ -421,3 +437,31 @@ appendSensorDataMMA8451Q(uint8_t* buf)
 	}
 	return index;
 }
+
+void getAccelMMA8451Q(int16_t* buff) {
+    /*	
+     * kWarpSensorOutputRegisterMMA8451QOUT_X_MSB			= 0x01,
+     * kWarpSensorOutputRegisterMMA8451QOUT_X_LSB			= 0x02,
+     * kWarpSensorOutputRegisterMMA8451QOUT_Y_MSB			= 0x03,
+     * kWarpSensorOutputRegisterMMA8451QOUT_Y_LSB			= 0x04,
+     * kWarpSensorOutputRegisterMMA8451QOUT_Z_MSB			= 0x05,
+     * kWarpSensorOutputRegisterMMA8451QOUT_Z_LSB			= 0x06,
+     */
+
+    readSensorRegisterMMA8451Q(kWarpSensorOutputRegisterMMA8451QOUT_X_MSB, 6);
+
+    for (int i = 0; i < 3; i++)
+    {
+        buff[i] = (int16_t)(((uint16_t)deviceMMA8451QState.i2cBuffer[2 * i] << 8) + (deviceMMA8451QState.i2cBuffer[2 * i + 1] & 0xFC)) >> 2;
+    }
+}
+
+void floatPrint(double to_print) {
+#define PRECISION 10000
+#define sign(x) (((x)<0)?-1:1)
+    int intPart = (int)to_print;
+    int decimalPart = (to_print - intPart) * PRECISION;
+
+    warpPrint("%d.%04d", intPart, decimalPart*sign(decimalPart));
+}   
+
